@@ -10,5 +10,5 @@ jobs:
           # Carichiamo il JSON qui dentro. GitHub Actions lo gestisce in modo sicuro.
           EVENT_DATA: ${{ toJSON(github.event) }}
           # Ora usiamo la variabile d'ambiente standard di Linux
-          run: echo '$EVENT_DATA'
+          run: echo "$EVENT_DATA"
 
