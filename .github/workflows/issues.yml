@@ -6,5 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Output event details
-        run: echo"${{ toJSON(github.event) }}"
+        env:
+          # Carichiamo il JSON qui dentro. GitHub Actions lo gestisce in modo sicuro.
+          EVENT_DATA: ${{ toJSON(github.event) }}
+          # Ora usiamo la variabile d'ambiente standard di Linux
+          run: echo '$EVENT_DATA'
 
