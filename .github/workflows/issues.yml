@@ -8,5 +8,5 @@ jobs:
       - name: Output event details
         env:
           EVENT_DATA: ${{ toJSON(github.event) }}
-          run: echo "$EVENT_DATA"
+        run: echo "$EVENT_DATA"
 
