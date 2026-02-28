@@ -29,14 +29,14 @@ jobs:
       - name: Build code
         run: npm run build
   deploy2:
-    - runs-on: ubuntu-latest
-    - steps:
-        - name: Get code
-          uses: actions/checkout@v3
-        - name: Install dependencies
-          run: npm ci
-        - name: deploy code
-          run: echo "Deploying exercise 2..."
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: deploy code
+        run: echo "Deploying exercise 2..."
 
 
 
