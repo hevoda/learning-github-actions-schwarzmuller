@@ -1,52 +1,74 @@
+# Nome del workflow che apparirà nell'interfaccia di GitHub
 name: Deploy website
+
+# Definisce l'evento che scatena il workflow
 on:
   push:
     branches:
-      - main
+      - main # Si attiva ogni volta che fai un "push" sul branch principale
+
 jobs:
+  # --- PRIMO JOB: TEST ---
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Utilizza una macchina virtuale Linux aggiornata
     steps:
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Scarica il codice della tua repository nel runner
+
       - name: Install dependencies
-        run: npm ci
+        run: npm ci # Installa le dipendenze definite in package-lock.json (veloce e pulito)
+
       - name: Lint code
-        run: npm run lint
+        run: npm run lint # Controlla la qualità del codice (es. errori di sintassi o stile)
+
       - name: Test code
-        run: npm run test
+        run: npm run test # Esegue i test unitari definiti nel progetto
+
+  # --- SECONDO JOB: BUILD ---
   build:
-    needs: test
+    needs: test # Questo job parte SOLO se il job "test" finisce con successo
     runs-on: ubuntu-latest
     outputs:
+      # Espone un'uscita a livello di JOB per renderla leggibile ad altri job (es. deploy)
       script-file: ${{ steps.publish.outputs.script-file }}
     steps:
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Install dependencies
         run: npm ci
-      - name: Build website
-        run: npm run build
-        id: publish
-      - name: Publish JS filename
-        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-files
-          path: dist
 
+      - name: Build website
+        run: npm run build # Compila il progetto (crea la cartella /dist con i file pronti)
+
+      - name: Publish JS filename
+        id: publish # ID fondamentale per permettere al job di recuperare l'output di questo step
+        run: |
+          FILE=$(find dist/assets/*.js -type f -exec basename {} \; | head -n 1)
+          echo "script-file=$FILE" >> $GITHUB_OUTPUT
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4 # Salva i file compilati sui server di GitHub
+        with:
+          name: dist-files # Nome del pacchetto salvato
+          path: dist       # Cartella da salvare
+
+  # --- TERZO JOB: DEPLOY ---
   deploy:
-    needs: build
+    needs: build # Parte solo dopo che il job "build" è completato
     runs-on: ubuntu-latest
     steps:
       - name: Get build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4 # Recupera i file salvati nel job precedente
         with:
-          name: dist-files
+          name: dist-files # Deve corrispondere al nome usato in upload-artifact
+
       - name: Output contents
-        run: ls
+        run: ls -R # Elenca i file scaricati (utile per debug, -R mostra le sottocartelle)
+
       - name: Output filename
-        run: echo "${{ needs.build.outputs.script-file}}"
+        # Stampa il nome del file JS che abbiamo "passato" dal job build
+        run: echo "Il file JS principale è ${{ needs.build.outputs.script-file }}"
+
       - name: Deploy
-        run: echo "Deploying..."
+        run: echo "Deploying..." # Qui inseriresti i comandi reali per inviare i file al server
