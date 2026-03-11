@@ -44,10 +44,7 @@ jobs:
       - name: Publish JS filename
         id: publish # ID fondamentale per permettere al job di recuperare l'output di questo step
         run: |
-          # Cerca il file .js generato (che ha un hash variabile nel nome, es. index-a1b2.js)
-          # 'basename' estrae solo il nome file senza il percorso
           FILE=$(find dist/assets/*.js -type f -exec basename {} \; | head -n 1)
-          # Scrive il risultato nel file speciale GITHUB_OUTPUT per "passarlo" all'esterno
           echo "script-file=$FILE" >> $GITHUB_OUTPUT
 
       - name: Upload artifacts
