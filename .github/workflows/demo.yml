@@ -15,11 +15,18 @@ jobs:
       - name: Get code
         uses: actions/checkout@v4 # Scarica il codice della tua repository nel runner
 
+      - name: Cache dependencies
+        uses: actions/cache@v3 # Permette di salvare e riutilizzare la cartella node_modules per velocizzare le installazioni future
+        with:
+          path: ~/.npm # Cartella dove npm salva le dipendenze
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }} # Crea una chiave unica basata sul contenuto di package-lock.json
+
+
       - name: Install dependencies
         run: npm ci # Installa le dipendenze definite in package-lock.json (veloce e pulito)
 
       - name: Lint code
-        run: npm run lint # Controlla la qualità del codice (es. errori di sintassi o stile)
+        run: npm run lint # Controlla la qualità del codice (es. Errori di sintassi o stile)
 
       - name: Test code
         run: npm run test # Esegue i test unitari definiti nel progetto
@@ -34,6 +41,12 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        uses: actions/cache@v3 # Permette di salvare e riutilizzare la cartella node_modules per velocizzare le installazioni future
+        with:
+          path: ~/.npm # Cartella dove npm salva le dipendenze
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }} # Crea una chiave unica basata sul contenuto di package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -68,7 +81,7 @@ jobs:
 
       - name: Output filename
         # Stampa il nome del file JS che abbiamo "passato" dal job build
-        run: echo "Il file JS principale è ${{ needs.build.outputs.script-file }}"
+        run: echo "${{ needs.build.outputs.script-file }}"
 
       - name: Deploy
         run: echo "Deploying..." # Qui inseriresti i comandi reali per inviare i file al server
