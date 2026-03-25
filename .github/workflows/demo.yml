@@ -15,6 +15,13 @@ jobs:
       - name: Get code
         uses: actions/checkout@v4 # Scarica il codice della tua repository nel runner
 
+      - name: Cache dependencies
+        uses: actions/cache@v3 # Permette di salvare e riutilizzare la cartella node_modules per velocizzare le installazioni future
+        with:
+          path: ~/.npm # Cartella dove npm salva le dipendenze
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }} # Crea una chiave unica basata sul contenuto di package-lock.json
+
+
       - name: Install dependencies
         run: npm ci # Installa le dipendenze definite in package-lock.json (veloce e pulito)
 
@@ -34,6 +41,12 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        uses: actions/cache@v3 # Permette di salvare e riutilizzare la cartella node_modules per velocizzare le installazioni future
+        with:
+          path: ~/.npm # Cartella dove npm salva le dipendenze
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }} # Crea una chiave unica basata sul contenuto di package-lock.json
 
       - name: Install dependencies
         run: npm ci
