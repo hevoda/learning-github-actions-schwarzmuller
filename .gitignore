@@ -1,4 +1,10 @@
-# Logs
+# --- Dipendenze e Build (per tutte le sottocartelle) ---
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# --- Log ---
 logs
 *.log
 npm-debug.log*
@@ -7,18 +13,22 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# --- File di configurazione sensibili (Fondamentali per il modulo Secrets) ---
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
+# --- IDE e Editor (IntelliJ/WebStorm) ---
+.idea/
+.vscode/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# --- Sistema Operativo ---
+.DS_Store
+Thumbs.db

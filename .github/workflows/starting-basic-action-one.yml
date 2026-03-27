@@ -1,0 +1,100 @@
+# Nome del workflow che apparirà nell'interfaccia di GitHub
+name: Deploy website - Starting Project one
+
+# Definisce l'evento che scatena il workflow
+on:
+  push:
+    branches:
+      - main
+    # [AGGIUNTO]: Importante per non far girare questo workflow
+    # quando lavori su 'env-variables-secrets'.
+    paths:
+      - 'starting-basic-action/**'
+
+jobs:
+  # --- PRIMO JOB: TEST ---
+  test:
+    runs-on: ubuntu-latest
+    # [AGGIUNTO]: Imposta la cartella di lavoro per tutti i comandi 'run'
+    defaults:
+      run:
+        working-directory: ./starting-basic-action
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        uses: actions/cache@v4 # Aggiornato a v4
+        with:
+          path: ~/.npm
+          # [MODIFICATO]: Punta al package-lock specifico per generare la chiave corretta
+          key: deps-node-modules-${{ hashFiles('starting-basic-action/package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Test code
+        run: npm run test
+
+  # --- SECONDO JOB: BUILD ---
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./starting-basic-action
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('starting-basic-action/package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build website
+        run: npm run build
+
+      - name: Publish JS filename
+        id: publish
+        run: |
+          # [NOTA]: Eseguito dentro starting-basic-action grazie al default sopra
+          FILE=$(find dist/assets/*.js -type f -exec basename {} \; | head -n 1)
+          echo "script-file=$FILE" >> $GITHUB_OUTPUT
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          # Percorso relativo al working-directory definito sopra
+          path: dist
+
+  # --- TERZO JOB: DEPLOY ---
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # [NOTA]: Qui non serve working-directory perché lavoriamo sugli artifacts scaricati
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files
+          path: ./dist # Scarica nella root del runner per semplicità
+
+      - name: Output contents
+        run: ls -R ./dist
+
+      - name: Output filename
+        run: echo "${{ needs.build.outputs.script-file }}"
+
+      - name: Deploy
+        run: echo "Deploying..."
