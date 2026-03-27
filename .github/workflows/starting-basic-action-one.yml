@@ -75,7 +75,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist-files
-          # Percorso relativo al working-directory definito sopra
+          # Percorso relativo al working-directory: ./starting-basic-action
           path: dist
 
   # --- TERZO JOB: DEPLOY ---
