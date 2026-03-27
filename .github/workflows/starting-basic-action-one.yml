@@ -15,6 +15,7 @@ on:
     # quando lavori su 'env-variables-secrets'.
     paths:
       - 'starting-basic-action/**'
+  workflow_dispatch: # Permette l'avvio manuale da GitHub
 
 jobs:
   # --- PRIMO JOB: TEST ---
