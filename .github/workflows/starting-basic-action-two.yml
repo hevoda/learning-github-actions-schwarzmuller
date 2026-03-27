@@ -27,11 +27,12 @@ jobs:
       run:
         working-directory: ./starting-basic-action
     steps:
+      - name: Get code
+        uses: actions/checkout@v4 # Deve essere primo per permettere al working-directory di funzionare
+
       - name: Output event data
         run: echo "Event triggered"
 
-      - name: Get code
-        uses: actions/checkout@v4 # Aggiornato a v4
 
       - name: Cache dependencies
         uses: actions/cache@v4 # Aggiornato a v4
