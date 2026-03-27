@@ -3,6 +3,11 @@ name: Deploy website - Starting Project one
 
 # Definisce l'evento che scatena il workflow
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'starting-basic-action/**'
   push:
     branches:
       - main
