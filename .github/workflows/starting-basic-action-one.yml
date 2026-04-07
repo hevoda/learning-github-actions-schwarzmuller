@@ -1,16 +1,20 @@
 # Nome del workflow che apparirà nell'interfaccia di GitHub
-name: Deploy website - Starting Project one
+name: Deploy website - Training part one
 
 # Definisce l'evento che scatena il workflow
 on:
   pull_request:
+    types:
+       [opened, synchronize] # Ora riparte a ogni push sulla PR
     branches:
       - main
+      - dev
     paths:
       - 'starting-basic-action/**'
   push:
     branches:
       - main
+      - dev
     # [AGGIUNTO]: Importante per non far girare questo workflow
     # quando lavori su 'env-variables-secrets'.
     paths:
@@ -34,7 +38,7 @@ jobs:
         with:
           path: ~/.npm
           # hashFiles() usa il percorso dal repository root
-          key: deps-node-modules-${{ hashFiles('starting-basic-action/package-lock.json') }}
+          key: ${{ runner.os }}-deps-node-modules-${{ hashFiles('starting-basic-action/package-lock.json') }}
 
       - name: Install dependencies
         run: npm ci
@@ -62,7 +66,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: deps-node-modules-${{ hashFiles('starting-basic-action/package-lock.json') }}
+          key: ${{ runner.os }}-deps-node-modules-${{ hashFiles('starting-basic-action/package-lock.json') }}
 
       - name: Install dependencies
         run: npm ci
@@ -83,7 +87,7 @@ jobs:
           name: dist-files
           # Percorso completo dal repository root (non usa working-directory)
           path: starting-basic-action/dist
-
+          retention-days: 1
   # --- TERZO JOB: DEPLOY ---
   deploy:
     needs: build
