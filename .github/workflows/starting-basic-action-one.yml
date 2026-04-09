@@ -11,14 +11,16 @@ on:
       - dev
     paths:
       - 'starting-basic-action/**'
+      - '.github/workflows/starting-basic-action-one.yml'
   push:
     branches:
       - main
       - dev
-    # [AGGIUNTO]: Importante per non far girare questo workflow
+   # [AGGIUNTO]: Importante per non far girare questo workflow
     # quando lavori su 'env-variables-secrets'.
     paths:
       - 'starting-basic-action/**'
+      - '.github/workflows/starting-basic-action-one.yml'
   workflow_dispatch: # Permette l'avvio manuale da GitHub
 
 jobs:
