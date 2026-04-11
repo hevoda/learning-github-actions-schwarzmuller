@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-report
-          path: test.json
+          path: starting-basic-action/test.json
   build:
     needs: test
     runs-on: ubuntu-latest
