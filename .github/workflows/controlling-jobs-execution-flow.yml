@@ -4,6 +4,7 @@ on:
     branches:
       - dev
     paths:
+      - 'starting-basic-action/**'
       - '.github/workflows/controlling-jobs-execution-flow.yml'
   workflow_dispatch:
 jobs:

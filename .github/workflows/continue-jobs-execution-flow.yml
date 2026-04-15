@@ -4,7 +4,8 @@ on:
     branches:
       - dev
     paths:
-      - '.github/workflows/controlling-jobs-execution-flow.yml'
+      - 'starting-basic-action/**'
+      - '.github/workflows/continue-jobs-execution-flow.yml'
   workflow_dispatch:
 jobs:
   lint:
