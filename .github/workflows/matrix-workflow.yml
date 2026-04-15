@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false # <--- Impedisce la cancellazione degli altri job
       matrix:
-        node-version: [20, 24 ]
+        node-version: [12 , 20, 24 ]
         operating-system: [ubuntu-latest , windows-latest]
     runs-on: ${{ matrix.operating-system}}
     defaults:
