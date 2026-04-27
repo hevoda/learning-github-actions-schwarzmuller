@@ -1,11 +1,11 @@
-name: Controlling workflow and job execution
+name: Continue workflow and job execution
 on:
   push:
     branches:
       - dev
     paths:
       - 'starting-basic-action/**'
-      - '.github/workflows/controlling-jobs-execution-flow.yml'
+      - '.github/workflows/continue-jobs-execution-flow.yml'
   workflow_dispatch:
 jobs:
   lint:
@@ -45,10 +45,10 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Test code
+        continue-on-error: true
         id: run-tests
         run: npm run test
       - name: Upload test report
-        if: failure() && steps.run-tests.outcome == 'failure'
         uses: actions/upload-artifact@v4
         with:
           name: test-report
@@ -93,8 +93,8 @@ jobs:
       - name: Deploy
         run: echo "Deploying..."
   report:
-    needs: [lint , deploy]
-    if: failure()
+    needs: [lint ,test , build, deploy]
+    if: always() && contains(needs.*.result, 'failure')
     runs-on: ubuntu-latest
     steps:
       - name: Output information
