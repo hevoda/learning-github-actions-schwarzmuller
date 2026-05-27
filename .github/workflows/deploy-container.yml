@@ -41,10 +41,19 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg MONGODB_USERNAME=${{ secrets.MONGODB_USERNAME }} \
+            --build-arg MONGODB_PASSWORD=${{ secrets.MONGODB_PASSWORD }} \
+            -t gha-demo:latest \
+            ./env-variables-secrets
       - name: Output information
         env:
           PORT: 3000
         run: |        
-          echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
-          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+          echo "MONGODB_DB_NAME: ${{ env.MONGODB_DB_NAME }}"
+          echo "Docker image built successfully"
           echo "${{ env.PORT }}"
