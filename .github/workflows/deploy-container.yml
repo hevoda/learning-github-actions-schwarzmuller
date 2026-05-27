@@ -14,6 +14,10 @@ jobs:
   test:
     environment: testing
     runs-on: ubuntu-latest
+    # [AGGIUNTO]: Imposta la cartella di lavoro per tutti i comandi 'run' di questo job
+    defaults:
+      run:
+        working-directory: ./env-variables-secrets
     env:
       MONGODB_CONNECTION_PROTOCOL: mongodb+srv
       MONGODB_CLUSTER_ADDRESS:  cluster0.sizxk9i.mongodb.net
