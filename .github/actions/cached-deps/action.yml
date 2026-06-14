@@ -3,8 +3,6 @@ description: 'Get the dependencies (via npm) and cache them'
 runs:
   using: 'composite'
   steps:
-    - name: Get code
-      uses: actions/checkout@v4
     - name: Cache dependencies
       id: cache
       uses: actions/cache@v4
@@ -15,3 +13,4 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm ci
       shell: bash
+      working-directory: starting-basic-action
